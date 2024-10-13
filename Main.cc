@@ -6,7 +6,14 @@ using namespace std;
 
 string toLowerCase(string str)
 {
-    transform(str.begin(), str.end(), str.begin(), ::tolower);
+    for (char &c : str)
+    {
+        if (c >= 'A' && c <= 'Z')
+        {
+            c = c + 32;
+        }
+    }
+
     return str;
 }
 
