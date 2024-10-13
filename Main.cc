@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include <algorithm> 
+#include <algorithm>
 
 using namespace std;
 
@@ -13,42 +13,90 @@ string toLowerCase(string str)
             c = c + 32;
         }
     }
-
     return str;
 }
 
-class Item
+class ItemBase
 {
-private:
+protected:
     string id;
     string name;
     int quantity;
     double price;
-    string category;
 
 public:
-    Item(string id, string name, int quantity, double price, string category)
-        : id(id), name(name), quantity(quantity), price(price), category(category) {}
+    ItemBase(string id, string name, int quantity, double price)
+        : id(id), name(name), quantity(quantity), price(price) {}
 
-    string getID() { return id; }
-    string getName() { return name; }
-    int getQuantity() { return quantity; }
-    double getPrice() { return price; }
-    string getCategory() { return category; }
+    virtual string getID() = 0;
+    virtual string getName() = 0;
+    virtual int getQuantity() = 0;
+    virtual double getPrice() = 0;
+    virtual string getCategory() = 0;
 
-    void setQuantity(int newQuantity) { quantity = newQuantity; }
-    void setPrice(double newPrice) { price = newPrice; }
+    virtual void setQuantity(int newQuantity) = 0;
+    virtual void setPrice(double newPrice) = 0;
+
+    virtual ~ItemBase() {}
+};
+
+class ClothingItem : public ItemBase
+{
+public:
+    ClothingItem(string id, string name, int quantity, double price)
+        : ItemBase(id, name, quantity, price) {}
+
+    string getID() override { return id; }
+    string getName() override { return name; }
+    int getQuantity() override { return quantity; }
+    double getPrice() override { return price; }
+    string getCategory() override { return "Clothing"; }
+
+    void setQuantity(int newQuantity) override { quantity = newQuantity; }
+    void setPrice(double newPrice) override { price = newPrice; }
+};
+
+class ElectronicsItem : public ItemBase
+{
+public:
+    ElectronicsItem(string id, string name, int quantity, double price)
+        : ItemBase(id, name, quantity, price) {}
+
+    string getID() override { return id; }
+    string getName() override { return name; }
+    int getQuantity() override { return quantity; }
+    double getPrice() override { return price; }
+    string getCategory() override { return "Electronics"; }
+
+    void setQuantity(int newQuantity) override { quantity = newQuantity; }
+    void setPrice(double newPrice) override { price = newPrice; }
+};
+
+class EntertainmentItem : public ItemBase
+{
+public:
+    EntertainmentItem(string id, string name, int quantity, double price)
+        : ItemBase(id, name, quantity, price) {}
+
+    string getID() override { return id; }
+    string getName() override { return name; }
+    int getQuantity() override { return quantity; }
+    double getPrice() override { return price; }
+    string getCategory() override { return "Entertainment"; }
+
+    void setQuantity(int newQuantity) override { quantity = newQuantity; }
+    void setPrice(double newPrice) override { price = newPrice; }
 };
 
 class Inventory
 {
 private:
-    Item *items[100];
+    ItemBase *items[100];
     int itemCount;
 
     int findItemByID(string id)
     {
-        id = toLowerCase(id); 
+        id = toLowerCase(id);
         for (int i = 0; i < itemCount; ++i)
         {
             if (toLowerCase(items[i]->getID()) == id)
@@ -70,7 +118,7 @@ private:
                                                   : (items[j]->getPrice() < items[j + 1]->getPrice()));
                 if (condition)
                 {
-                    Item *temp = items[j];
+                    ItemBase *temp = items[j];
                     items[j] = items[j + 1];
                     items[j + 1] = temp;
                 }
@@ -84,17 +132,24 @@ public:
     void addItem(string id, string name, int quantity, double price, string category)
     {
         category = toLowerCase(category);
-        
-        if (findItemByID(id) != -1) 
+
+        if (findItemByID(id) != -1)
         {
             cout << "Item with ID " << id << " already exists!" << endl;
             return;
         }
 
-        if (category == "clothing" || category == "electronics" || category == "entertainment")
+        if (category == "clothing")
         {
-            items[itemCount++] = new Item(id, name, quantity, price, category);
-            cout << "Item added successfully!" << endl;
+            items[itemCount++] = new ClothingItem(id, name, quantity, price);
+        }
+        else if (category == "electronics")
+        {
+            items[itemCount++] = new ElectronicsItem(id, name, quantity, price);
+        }
+        else if (category == "entertainment")
+        {
+            items[itemCount++] = new EntertainmentItem(id, name, quantity, price);
         }
         else
         {
@@ -109,14 +164,10 @@ public:
         {
             if (updateQuantity)
             {
-                cout << "Quantity of Item " << items[index]->getName() << " is updated from "
-                     << items[index]->getQuantity() << " to " << newQuantity << endl;
                 items[index]->setQuantity(newQuantity);
             }
             else
             {
-                cout << "Price of Item " << items[index]->getName() << " is updated from "
-                     << items[index]->getPrice() << " to " << newPrice << endl;
                 items[index]->setPrice(newPrice);
             }
         }
@@ -131,7 +182,6 @@ public:
         int index = findItemByID(id);
         if (index != -1)
         {
-            cout << "Item " << items[index]->getName() << " has been removed from the inventory" << endl;
             for (int i = index; i < itemCount - 1; ++i)
             {
                 items[i] = items[i + 1];
@@ -241,18 +291,20 @@ int main()
 
         system("cls");
 
+        string id, name, category;
+        int quantity;
+        double price;
+        bool updateQuantity, ascending;
+        int newQuantity;
+        double newPrice;
+
         switch (choice)
         {
         case 1:
-        {
-            string id, name, category;
-            int quantity;
-            double price;
             cout << "Enter ID: ";
-            cin >> id;
-            cin.ignore();
+            getline(cin, id);
             cout << "Enter Name: ";
-            getline(cin, name); 
+            getline(cin, name);
             cout << "Enter Quantity: ";
             cin >> quantity;
             cout << "Enter Price: ";
@@ -261,72 +313,73 @@ int main()
             cin >> category;
             inventory.addItem(id, name, quantity, price, category);
             break;
-        }
+
         case 2:
-        {
-            string id;
-            int type;
             cout << "Enter ID: ";
-            cin >> id;
-            cout << "Update (1 - Quantity, 2 - Price): ";
-            cin >> type;
-            if (type == 1)
+            getline(cin, id);
+            cout << "Update Quantity? (1 for Yes, 0 for No): ";
+            cin >> updateQuantity;
+            if (updateQuantity)
             {
-                int newQuantity;
-                cout << "Enter new Quantity: ";
+                cout << "Enter New Quantity: ";
                 cin >> newQuantity;
                 inventory.updateItem(id, true, newQuantity);
             }
             else
             {
-                double newPrice;
-                cout << "Enter new Price: ";
+                cout << "Enter New Price: ";
                 cin >> newPrice;
                 inventory.updateItem(id, false, 0, newPrice);
             }
             break;
-        }
+
         case 3:
-        {
-            string id;
             cout << "Enter ID: ";
-            cin >> id;
+            getline(cin, id);
             inventory.removeItem(id);
             break;
-        }
+
         case 4:
-        {
-            string category;
-            cout << "Enter Category: ";
+            cout << "Enter Category (Clothing/Electronics/Entertainment): ";
             cin >> category;
             inventory.displayItemsByCategory(category);
             break;
-        }
+
         case 5:
             inventory.displayAllItems();
             break;
+
         case 6:
-        {
-            string id;
             cout << "Enter ID: ";
-            cin >> id;
+            getline(cin, id);
             inventory.searchItem(id);
             break;
-        }
+
         case 7:
-        {
-            int type, order;
-            cout << "Sort by (1 - Quantity, 2 - Price): ";
-            cin >> type;
-            cout << "Order (1 - Ascending, 2 - Descending): ";
-            cin >> order;
-            inventory.sortItemsBy(type == 1, order == 1);
+            cin.ignore();
+            cout << "Sort by (1 for Quantity, 0 for Price): ";
+            cin >> updateQuantity;
+            cout << "Sort in Ascending order? (1 for Yes, 0 for No): ";
+            cin >> ascending;
+            inventory.sortItemsBy(updateQuantity, ascending);
             break;
-        }
+
         case 8:
             inventory.displayLowStockItems();
             break;
+
+        case 9:
+            cout << "Exiting program." << endl;
+            break;
+
+        default:
+            cout << "Invalid choice! Please try again." << endl;
+            break;
         }
+
+        system("pause");
+        system("cls");
+
     } while (choice != 9);
 
     return 0;
