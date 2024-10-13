@@ -287,20 +287,19 @@ int main()
         cout << "Menu\n1 - Add Item\n2 - Update Item\n3 - Remove Item\n4 - Display Items by Category\n"
              << "5 - Display All Items\n6 - Search Item\n7 - Sort Items\n8 - Display Low Stock Items\n9 - Exit\n";
 
-        // Input validation for choice
         do
         {
             cout << "Enter choice (1-9): ";
             cin >> choice;
             if (cin.fail() || choice < 1 || choice > 9)
             {
-                cin.clear();                   // clear the error state
-                cin.ignore(10000, '\n');        // ignore invalid input
+                cin.clear();                   
+                cin.ignore(10000, '\n');      
                 cout << "Invalid choice! Please enter a number between 1 and 9." << endl;
             }
         } while (cin.fail() || choice < 1 || choice > 9);
         
-        cin.ignore(); // Clear newline character from buffer
+        cin.ignore(); 
 
         system("cls");
 
@@ -319,7 +318,7 @@ int main()
             cout << "Enter Name: ";
             getline(cin, name);
 
-            // Input validation for quantity
+       
             do
             {
                 cout << "Enter Quantity: ";
@@ -333,7 +332,7 @@ int main()
                 }
             } while (cin.fail() || quantity < 0);
 
-            // Input validation for price
+          
             do
             {
                 cout << "Enter Price: ";
@@ -356,7 +355,7 @@ int main()
             cout << "Enter ID: ";
             getline(cin, id);
 
-            // Input validation for updateQuantity (1 for Yes, 0 for No)
+      
             do
             {
                 cout << "Update Quantity? (1 for Yes, 0 for No): ";
@@ -371,7 +370,7 @@ int main()
 
             if (updateQuantity)
             {
-                // Input validation for newQuantity
+           
                 do
                 {
                     cout << "Enter New Quantity: ";
@@ -388,7 +387,7 @@ int main()
             }
             else
             {
-                // Input validation for newPrice
+         
                 do
                 {
                     cout << "Enter New Price: ";
@@ -442,7 +441,7 @@ int main()
             break;
 
         case 7:
-            // Input validation for sorting byQuantity (1 for Quantity, 0 for Price)
+    
             do
             {
                 cout << "Sort by (1 for Quantity, 0 for Price): ";
@@ -455,7 +454,7 @@ int main()
                 }
             } while (cin.fail() || (updateQuantity != 0 && updateQuantity != 1));
 
-            // Input validation for ascending order (1 for Yes, 0 for No)
+        
             do
             {
                 cout << "Sort in Ascending order? (1 for Yes, 0 for No): ";
