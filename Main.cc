@@ -286,8 +286,21 @@ int main()
     {
         cout << "Menu\n1 - Add Item\n2 - Update Item\n3 - Remove Item\n4 - Display Items by Category\n"
              << "5 - Display All Items\n6 - Search Item\n7 - Sort Items\n8 - Display Low Stock Items\n9 - Exit\n";
-        cin >> choice;
-        cin.ignore();
+
+        // Input validation for choice
+        do
+        {
+            cout << "Enter choice (1-9): ";
+            cin >> choice;
+            if (cin.fail() || choice < 1 || choice > 9)
+            {
+                cin.clear();                   // clear the error state
+                cin.ignore(10000, '\n');        // ignore invalid input
+                cout << "Invalid choice! Please enter a number between 1 and 9." << endl;
+            }
+        } while (cin.fail() || choice < 1 || choice > 9);
+        
+        cin.ignore(); // Clear newline character from buffer
 
         system("cls");
 
@@ -305,10 +318,35 @@ int main()
             getline(cin, id);
             cout << "Enter Name: ";
             getline(cin, name);
-            cout << "Enter Quantity: ";
-            cin >> quantity;
-            cout << "Enter Price: ";
-            cin >> price;
+
+            // Input validation for quantity
+            do
+            {
+                cout << "Enter Quantity: ";
+                cin >> quantity;
+                if (cin.fail() || quantity < 0)
+                {
+                    cin.clear();
+                    cin.ignore(10000, '\n');
+                    cout << "Invalid quantity! Please enter a non-negative integer." << endl;
+                    quantity = -1;
+                }
+            } while (cin.fail() || quantity < 0);
+
+            // Input validation for price
+            do
+            {
+                cout << "Enter Price: ";
+                cin >> price;
+                if (cin.fail() || price < 0.0)
+                {
+                    cin.clear();
+                    cin.ignore(10000, '\n');
+                    cout << "Invalid price! Please enter a non-negative number." << endl;
+                    price = -1;
+                }
+            } while (cin.fail() || price < 0.0);
+
             cout << "Enter Category (Clothing/Electronics/Entertainment): ";
             cin >> category;
             inventory.addItem(id, name, quantity, price, category);
@@ -317,18 +355,52 @@ int main()
         case 2:
             cout << "Enter ID: ";
             getline(cin, id);
-            cout << "Update Quantity? (1 for Yes, 0 for No): ";
-            cin >> updateQuantity;
+
+            // Input validation for updateQuantity (1 for Yes, 0 for No)
+            do
+            {
+                cout << "Update Quantity? (1 for Yes, 0 for No): ";
+                cin >> updateQuantity;
+                if (cin.fail() || (updateQuantity != 0 && updateQuantity != 1))
+                {
+                    cin.clear();
+                    cin.ignore(10000, '\n');
+                    cout << "Invalid input! Please enter 1 for Yes or 0 for No." << endl;
+                }
+            } while (cin.fail() || (updateQuantity != 0 && updateQuantity != 1));
+
             if (updateQuantity)
             {
-                cout << "Enter New Quantity: ";
-                cin >> newQuantity;
+                // Input validation for newQuantity
+                do
+                {
+                    cout << "Enter New Quantity: ";
+                    cin >> newQuantity;
+                    if (cin.fail() || newQuantity < 0)
+                    {
+                        cin.clear();
+                        cin.ignore(10000, '\n');
+                        cout << "Invalid quantity! Please enter a non-negative integer." << endl;
+                    }
+                } while (cin.fail() || newQuantity < 0);
+
                 inventory.updateItem(id, true, newQuantity);
             }
             else
             {
-                cout << "Enter New Price: ";
-                cin >> newPrice;
+                // Input validation for newPrice
+                do
+                {
+                    cout << "Enter New Price: ";
+                    cin >> newPrice;
+                    if (cin.fail() || newPrice < 0.0)
+                    {
+                        cin.clear();
+                        cin.ignore(10000, '\n');
+                        cout << "Invalid price! Please enter a non-negative number." << endl;
+                    }
+                } while (cin.fail() || newPrice < 0.0);
+
                 inventory.updateItem(id, false, 0, newPrice);
             }
             break;
@@ -343,6 +415,20 @@ int main()
             cout << "Enter Category (Clothing/Electronics/Entertainment): ";
             cin >> category;
             inventory.displayItemsByCategory(category);
+
+            do
+            {
+                cout << "Sort by (1 for Quantity, 0 for Price): ";
+                cin >> updateQuantity;
+                if (cin.fail() || (updateQuantity != 0 && updateQuantity != 1))
+                {
+                    cin.clear();
+                    cin.ignore(10000, '\n');
+                    cout << "Invalid input! Please enter 1 for Quantity or 0 for Price." << endl;
+                }
+            } while (cin.fail() || (updateQuantity != 0 && updateQuantity != 1));
+
+
             break;
 
         case 5:
@@ -356,11 +442,32 @@ int main()
             break;
 
         case 7:
-            cin.ignore();
-            cout << "Sort by (1 for Quantity, 0 for Price): ";
-            cin >> updateQuantity;
-            cout << "Sort in Ascending order? (1 for Yes, 0 for No): ";
-            cin >> ascending;
+            // Input validation for sorting byQuantity (1 for Quantity, 0 for Price)
+            do
+            {
+                cout << "Sort by (1 for Quantity, 0 for Price): ";
+                cin >> updateQuantity;
+                if (cin.fail() || (updateQuantity != 0 && updateQuantity != 1))
+                {
+                    cin.clear();
+                    cin.ignore(10000, '\n');
+                    cout << "Invalid input! Please enter 1 for Quantity or 0 for Price." << endl;
+                }
+            } while (cin.fail() || (updateQuantity != 0 && updateQuantity != 1));
+
+            // Input validation for ascending order (1 for Yes, 0 for No)
+            do
+            {
+                cout << "Sort in Ascending order? (1 for Yes, 0 for No): ";
+                cin >> ascending;
+                if (cin.fail() || (ascending != 0 && ascending != 1))
+                {
+                    cin.clear();
+                    cin.ignore(10000, '\n');
+                    cout << "Invalid input! Please enter 1 for Yes or 0 for No." << endl;
+                }
+            } while (cin.fail() || (ascending != 0 && ascending != 1));
+
             inventory.sortItemsBy(updateQuantity, ascending);
             break;
 
